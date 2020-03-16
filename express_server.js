@@ -12,6 +12,9 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+// Tells the express application to use EJS as template engine
+app.set("view engine, ejs");
+
 // If request is received with /urls.json path, the urlDatabase object will be the response back to the listener
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
