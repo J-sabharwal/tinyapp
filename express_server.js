@@ -14,6 +14,12 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+// Passes the urls.index file the data via res.render when /url is requested 
+app.get("/urls", (req, res) => {
+  let templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
+});
+
 // Tells the express application to use EJS as template engine
 app.set("view engine, ejs");
 
