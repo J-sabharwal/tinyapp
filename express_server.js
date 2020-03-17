@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-// new route handler that passes the urls.index file the URL data via res.render when /url is requested 
+// new route handler that passes the urls.index file the URL data via res.render when /url is requested
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
@@ -32,12 +32,12 @@ app.get("/urls.json", (req, res) => {
 // shortURL is declared when passing the shortURL in the browser, so the longURL is be defined using shortURL as the object key
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
-  res.render("urls_show", templateVars); 
-})
+  res.render("urls_show", templateVars);
+});
 
 // HTML markup used with output string, can cause issues
 app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body</html>\n")
+  res.send("<html><body>Hello <b>World</b></body</html>\n");
 });
 
 // Using EXPRESS to listen port request and Printing message to to notify of listener
