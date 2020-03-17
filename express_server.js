@@ -68,15 +68,14 @@ app.get("/urls", (req, res) => {
 
 app.post("/urls", (req, res) => {
 
-  if (Object.values(urlDatabase).indexOf('req.body.longURL' > -1)) {
-    res.redirect(`urls/`)
-    res.send(`This URL has already been shortened!`);
-  } else {
+  // if (Object.values(urlDatabase).indexOf('req.body.longURL' > -1)) {
+  //   res.redirect(`urls/`)
+  // } else {
   let longURL = req.body.longURL;
   let shortURL = generateRandomString(6);
   urlDatabase[shortURL] = longURL;
   res.redirect(`urls/${shortURL}`);  
-  }      
+    
 });
 
 
