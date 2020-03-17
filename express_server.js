@@ -1,6 +1,13 @@
-function generateRandomString() {
-
+function generateRandomString(char) {
+  let result           = '';
+  let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let charactersLength = characters.length;
+  for ( var i = 0; i < char; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }
+
 const express = require("express");
 const app = express();
 const PORT = 8080;
@@ -46,16 +53,32 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// Redirecting the short URL to actual longURL
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
 // new route handler that passes the urls.index file the URL data via res.render when /url is requested
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
+
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");        
+
+  if (Object.values(urlDatabase).indexOf('req.body.longURL' > -1)) {
+    res.redirect(`urls/`)
+    res.send(`This URL has already been shortened!`);
+  } else {
+  let longURL = req.body.longURL;
+  let shortURL = generateRandomString(6);
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`urls/${shortURL}`);  
+  }      
 });
+
 
 // Using EXPRESS to listen port request and Printing message to to notify of listener
 app.listen(PORT, () => {
