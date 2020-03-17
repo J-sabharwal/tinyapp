@@ -28,8 +28,15 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+// Passing the shortURL in the browser (providing the longURL is defined), will return the request back using the template in the urls_show file.
+// shortURL is declared when passing the shortURL in the browser, so the longURL is be defined using shortURL as the object key
+app.get("/urls/:shortURL", (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  res.render("urls_show", templateVars); 
+})
+
 // HTML markup used with output string, can cause issues
-app.get("/hello", (req,res) => {
+app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body</html>\n")
 });
 
