@@ -67,15 +67,26 @@ app.get("/urls", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
-
-  // if (Object.values(urlDatabase).indexOf('req.body.longURL' > -1)) {
-  //   res.redirect(`urls/`)
-  // } else {
   let longURL = req.body.longURL;
+ 
+  // Obj.values returns values within an array
+  // .indexOf the longURL returns the element index number
+  // If the index number is more that -1 then the URL already exists
+  if (Object.values(urlDatabase).indexOf(longURL) > -1) {
+
+    // Looping over urlDatabase object comparing each key value with the longURL provided
+    for (const key in urlDatabase) {
+
+      // if theres a match then key is used to redirect the to the page for that URL
+      if (urlDatabase[key] === longURL) {
+        res.redirect(`urls/${key}`)
+      } 
+    }
+  } else {
   let shortURL = generateRandomString(6);
   urlDatabase[shortURL] = longURL;
   res.redirect(`urls/${shortURL}`);  
-    
+  }
 });
 
 
