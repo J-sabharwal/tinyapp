@@ -1,12 +1,12 @@
-function generateRandomString(char) {
+const generateRandomString = function(char) {
   let result           = '';
   let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let charactersLength = characters.length;
-  for ( var i = 0; i < char; i++ ) {
-     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  for (let i = 0; i < char; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
-}
+};
 
 const express = require("express");
 const app = express();
@@ -79,16 +79,20 @@ app.post("/urls", (req, res) => {
 
       // if theres a match then key is used to redirect the to the page for that URL
       if (urlDatabase[key] === longURL) {
-        res.redirect(`urls/${key}`)
-      } 
+        res.redirect(`urls/${key}`);
+      }
     }
   } else {
-  let shortURL = generateRandomString(6);
-  urlDatabase[shortURL] = longURL;
-  res.redirect(`urls/${shortURL}`);  
+    let shortURL = generateRandomString(6);
+    urlDatabase[shortURL] = longURL;
+    res.redirect(`urls/${shortURL}`);
   }
 });
 
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  res.redirect(`/urls`);
+});
 
 // Using EXPRESS to listen port request and Printing message to to notify of listener
 app.listen(PORT, () => {
