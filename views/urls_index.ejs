@@ -23,11 +23,14 @@
       </thead>
       <tbody>
         <% for(let url in urls) { %>
+          <!-- tr = table row, td = table data -->
           <tr>
+            <!-- Wrap table Data with Form Delete button  -->
             <form method="POST" action="/urls/<%= url %>/delete">
             <td><a href="#"><%= url %></a></td>
-            <td><%= urls[url] %>  
-              <button type="delete" align-items="center" style="float: right; background-color: darkorange; border-color: darkorange;" class="btn btn-primary">Delete</button>
+            <td><%= urls[url] %></td>
+            <!-- Wrap delete button in a table data tag -->
+             <td><button type="delete" align-items="center" style="float: right; background-color: darkorange; border-color: darkorange;" class="btn btn-primary">Delete</button>
             </td>
           </tr>
         </form>
