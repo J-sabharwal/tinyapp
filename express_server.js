@@ -28,17 +28,42 @@ const generateRandomID = function(char) {
   return result;
 };
 
-// Shortened URL Database
-const urlDatabase = {
-};
-
 // User Database
 const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+};
+
+const emailExists = (userEmail) => {
+  let answer = false;
+
+  for (const id in users) {
+    let email = users[id]["email"];
+    
+    if (email === userEmail) {
+      answer = true;
+    }
+  };
+  return answer;
+};
+
+
+
+// Shortened URL Database
+const urlDatabase = {
 };
 
 
 // Tells the express application to use EJS as template engine
 app.set("view engine", "ejs");
+
+// Login Page
+app.get("/login", (req, res) => {
+  res.render("login")
+});
 
 // If request is received with /urls.json path, the urlDatabase object will be the response back to the listener
 app.get("/urls.json", (req, res) => {
@@ -115,15 +140,25 @@ app.post("/urls", (req, res) => {
 
 //Register Account
 app.post('/register', (req, res) => {
+  let email = req.body.email;
+  let password = req.body.password;
+
+  if (email === "" || password === "") {
+    res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
+  };
+  if (emailExists(email) === true) {
+    res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
+  } else {
   let userID = generateRandomID(4);
   users[userID] = { id: userID, 
                     email: req.body.email,
                     password: req.body.password 
                   };
   res.cookie("user_id", users[userID].id);
-  console.log("---------------")
-  console.log(users)
+  // console.log(users)
+  
   res.redirect("/urls")
+   }
 });
 
 // Login
