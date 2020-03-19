@@ -75,7 +75,7 @@ app.set("view engine", "ejs");
 
 // Login Page
 app.get("/login", (req, res) => {
-  let templateVars = { username: req.cookies.user_id, };
+  let templateVars = { user_id: req.cookies.user_id, };
   res.render("login", templateVars)
 });
 
@@ -96,14 +96,14 @@ app.get("/", (req, res) => {
 
 // Add a route handler to retrieve a new URL and use the formatting from urls_new
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies.user_id, };
+  let templateVars = { user_id: req.cookies.user_id, };
   res.render("urls_new", templateVars);
 });
 
 // Passing the shortURL in the browser (providing the longURL is defined), will return the request back using the template in the urls_show file.
 // shortURL is declared when passing the shortURL in the browser, so the longURL is be defined using shortURL as the object key
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies.user_id,  };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user_id: req.cookies.user_id,  };
   res.render("urls_show", templateVars);
 });
 
@@ -116,7 +116,7 @@ app.get("/u/:shortURL", (req, res) => {
 // new route handler that passes the urls.index file the URL data via res.render when /url is requested
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
-    username: req.cookies.user_id,
+    user_id: req.cookies.user_id,
   };
   console.log('tempVars: ', templateVars);
   res.render("urls_index", templateVars);
@@ -124,7 +124,7 @@ app.get("/urls", (req, res) => {
 
 // Registration Page
 app.get('/register', (req, res) => {
-  let templateVars = { username: req.cookies.user_id,
+  let templateVars = { user_id: req.cookies.user_id,
   };
   res.render("urls_register", templateVars);
 });
@@ -190,8 +190,7 @@ app.post('/login', (req, res) => {
 //Logout
 app.post('/logout', (req, res) => {
   res.clearCookie("user_id", req.body.email);
-  res.redirect("/urls");
-
+  res.redirect("/login");
 });
 
 // Edit URL
