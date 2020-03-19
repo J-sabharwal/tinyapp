@@ -4,27 +4,25 @@
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>URL - TinyApp Example</title>
 </head>
-
 <body>
   <%- include('partials/_header.ejs') %>
   <div class="card text-center">
     <div class="card-header"></div>
-    <div class="card-body">
-      <h5 class="card-title">TinyURL for: <%= longURL %></h5>
-      <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
-    </div>
-    <div class ="card-footer text-muted"></div>
-    <div>
-    <form class="form-middle" action="/urls/<%= shortURL %>" method="POST">
-      <div class="form-group edit">
-        <h3 for="editURL" style="color: slategray;"class="label label-default">Edit</h3>
-        <input class="form-control" type="text" name="editURL" value="<%= longURL %>"  style="width: 300px; margin: auto; float: center;">
-        <br>
-        <button type="submit"  class="btn btn-outline-info">Submit</button>
+      <div class="card-body">
+        <h5 class="card-title">TinyURL for: <%= longURL %></h5>
+        <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       </div>
-    </form>
-    </div>
-    <div class="card bg-info text-white">
+      <div>
+        <form class="form-middle" action="/urls/<%= shortURL %>" method="POST">
+        <div class="form-group edit">
+          <h3 for="editURL" style="color: slategray;"class="label label-default">Edit</h3>
+          <input class="form-control" type="text" name="editURL" value="<%= longURL %>"  style="width: 300px; margin: auto; float: center;">
+        <br>
+          <button type="submit"  class="btn btn-outline-info">Submit</button>
+        </div>
+        </form>
+      </div>
+      <div class="card bg-info text-white">
       <div class="card-footer text-muted"></div>
     </div>
   </div>

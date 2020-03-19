@@ -25,20 +25,21 @@
       </thead>
       <tbody>
         <% for(let url in urls) { %>
-          <!-- tr = table row, td = table data -->
-          <tr>
-            <td><a href="<%= urls[urls] %>"><%= url %></a></td>
-            <td><%= urls[url] %></td>
-            <!-- Wrap delete button in a table data tag -->
-            <td><button type="button" class="btn btn-outline-success" ><a href="/urls/<%= url %>" style="text-decoration: none;">Edit</a></button>
-            </td>
-             <td>
-               <!-- Wrap table Data with Form Delete button  -->
-              <form method="POST" action="/urls/<%= url %>/delete">
-              <button type="delete" class="btn btn-outline-danger">Delete</button>
-              </form> 
-            </td>
-          </tr>
+        <!-- tr = table row, td = table data -->
+        <tr>
+          <td><a href="<%= urls[urls] %>"><%= url %></a></td>
+          <td><%= urls[url] %></td>
+          <!-- Wrap delete button in a table data tag -->
+          <td>
+            <button type="button" class="btn btn-outline-success" ><a href="/urls/<%= url %>" style="text-decoration: none;">Edit</a></button>
+          </td>
+          <td>
+          <!-- Wrap table Data with Form Delete button  -->
+            <form method="POST" action="/urls/<%= url %>/delete">
+            <button type="delete" class="btn btn-outline-danger">Delete</button>
+          </form> 
+        </td>
+        </tr>
         </form>
         <% } %>
       </tbody>

@@ -8,6 +8,22 @@ app.use(cookieP());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Databases --------------------------------------------------------------------------------------------------------------------
+
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "test@ex.com",
+    password: "123"
+  },
+};
+
+// Shortened URL Database template
+const urlDatabase = {
+};
+
+// Functions ---------------------------------------------------------------------------------------------------------------------
+
 const generateRandomString = function(char) {
   let result           = '';
   let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -26,15 +42,6 @@ const generateRandomID = function(char) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
-};
-
-// User Database
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "test@ex.com",
-    password: "123"
-  },
 };
 
 const emailExists = (userEmail) => {
@@ -64,10 +71,7 @@ const loginCheck = (email, password) => {
   return answer;
 };
 
-// Shortened URL Database template
-const urlDatabase = {
-};
-
+// Requests and Posts -------------------------------------------------------------------------------------------------------
 
 // Tells the express application to use EJS as template engine
 app.set("view engine", "ejs");
@@ -88,21 +92,25 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body</html>\n");
 });
 
-// Same as requestHandler in app.js, if request is received with no path after URL, Hello will be the response back to the listener
+// Route Handler - Hello
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-// Add a route handler to retrieve a new URL and use the formatting from urls_new
+// Route handler - new URL and use the formatting from urls_new
 app.get("/urls/new", (req, res) => {
   let templateVars = { user_id: req.cookies.user_id, };
   res.render("urls_new", templateVars);
 });
 
-// Passing the shortURL in the browser (providing the longURL is defined), will return the request back using the template in the urls_show file.
-// shortURL is declared when passing the shortURL in the browser, so the longURL is be defined using shortURL as the object key
+// Passing the shortURL in the browser, will return the request using urls_show template.
+// the longURL is be defined using shortURL as the object key
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user_id: req.cookies.user_id,  };
+  let templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL],
+    user_id: req.cookies.user_id,
+  };
   res.render("urls_show", templateVars);
 });
 
@@ -112,7 +120,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-// new route handler that passes the urls.index file the URL data via res.render when /url is requested
+// Route Handler request urls and renders ur_index
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
     user_id: req.cookies.user_id,
@@ -168,7 +176,6 @@ app.post('/register', (req, res) => {
       password: req.body.password
     };
     res.cookie("user_id", users[userID].id);
-    // console.log(users)
   
     res.redirect("/urls");
   }
