@@ -34,16 +34,6 @@ const urlDatabase = {
 
 // User Database
 const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
 };
 
 
@@ -130,15 +120,15 @@ app.post('/register', (req, res) => {
                     email: req.body.email,
                     password: req.body.password 
                   };
-  let email = users[userID]["email"]
-  res.cookie("user_id", email);
-  console.log(email)
+  res.cookie("user_id", users[userID].id);
+  console.log("---------------")
+  console.log(users)
   res.redirect("/urls")
 });
 
 // Login
 app.post('/login', (req, res) => {
-  res.cookie("user_id", req.body.username);
+  res.cookie("user_id", req.body.user_id);
   res.redirect("/urls");
 
 });
