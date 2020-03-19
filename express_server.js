@@ -50,6 +50,19 @@ const emailExists = (userEmail) => {
   return answer;
 };
 
+const passwordCorrect = (userPass) => {
+  let answer = false;
+console.log(userPass)
+  for (const id in users) {
+    let pword = users[id]["password"];
+    console.log(users[id]["password"])
+    if (pword === userPass) {
+      answer = true;
+    }
+  };
+  return answer;
+};
+
 
 
 // Shortened URL Database
@@ -62,7 +75,8 @@ app.set("view engine", "ejs");
 
 // Login Page
 app.get("/login", (req, res) => {
-  res.render("login")
+  
+  res.render("login", )
 });
 
 // If request is received with /urls.json path, the urlDatabase object will be the response back to the listener
@@ -163,9 +177,13 @@ app.post('/register', (req, res) => {
 
 // Login
 app.post('/login', (req, res) => {
-  res.cookie("user_id", req.body.user_id);
+  
+  if ((emailExists(req.body.email) === true) && (passwordCorrect(req.body.password) === true)) {
+  res.cookie("user_id", req.body.email);
   res.redirect("/urls");
-
+  } else {
+  res.send("Email or Password Incorrect!")
+  }
 });
 
 //Logout
@@ -177,7 +195,6 @@ app.post('/logout', (req, res) => {
 
 // Edit URL
 app.post('/urls/:id', (req, res) => {
-  console.log(req.body.editURL);
   let longURL = req.body.editURL;
   let shortURL = req.params.id;
   urlDatabase[shortURL] = longURL;
