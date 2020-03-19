@@ -32,8 +32,8 @@ const generateRandomID = function(char) {
 const users = { 
   "userRandomID": {
     id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    email: "test@ex.com", 
+    password: "123"
   },
 };
 
@@ -118,6 +118,7 @@ app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
     username: req.cookies.user_id,
   };
+  console.log('tempVars: ', templateVars);
   res.render("urls_index", templateVars);
 });
 
@@ -188,7 +189,7 @@ app.post('/login', (req, res) => {
 
 //Logout
 app.post('/logout', (req, res) => {
-  res.clearCookie("user_id");
+  res.clearCookie("user_id", req.body.email);
   res.redirect("/urls");
 
 });
