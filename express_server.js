@@ -123,9 +123,9 @@ app.get("/urls", (req, res) => {
 
 // Registration Page
 app.get('/register', (req, res) => {
-  // let templateVars = { username: req.cookies.user_id.email,
-  // };
-  res.render("urls_register");
+  let templateVars = { username: req.cookies.user_id,
+  };
+  res.render("urls_register", templateVars);
 });
 
 
