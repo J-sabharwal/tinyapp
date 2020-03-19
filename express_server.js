@@ -71,6 +71,13 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// Registration Page
+app.get('/register', (req, res) => {
+  let templateVars = { username: req.cookies["username"],
+  };
+  res.render("urls_register", templateVars);
+});
+
 
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
@@ -94,6 +101,11 @@ app.post("/urls", (req, res) => {
     res.redirect(`urls/${shortURL}`);
   }
 });
+
+// Register Account
+// app.post('/register', (req, res) => {
+  
+// });
 
 // Login
 app.post('/login', (req, res) => {
