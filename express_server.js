@@ -52,10 +52,10 @@ const emailExists = (userEmail) => {
 
 const passwordCorrect = (userPass) => {
   let answer = false;
-console.log(userPass)
+
   for (const id in users) {
     let pword = users[id]["password"];
-    console.log(users[id]["password"])
+    
     if (pword === userPass) {
       answer = true;
     }
@@ -75,8 +75,8 @@ app.set("view engine", "ejs");
 
 // Login Page
 app.get("/login", (req, res) => {
-  
-  res.render("login", )
+  let templateVars = { username: req.cookies.user_id, };
+  res.render("login", templateVars)
 });
 
 // If request is received with /urls.json path, the urlDatabase object will be the response back to the listener
