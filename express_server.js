@@ -1,3 +1,13 @@
+const express = require("express");
+const app = express();
+const PORT = 8080;
+const cookieP = require("cookie-parser");
+app.use(cookieP());
+// converts body from buffer to string that can be read
+// It then adds the data to the request object under the key body
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
 const generateRandomString = function(char) {
   let result           = '';
   let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -8,21 +18,34 @@ const generateRandomString = function(char) {
   return result;
 };
 
-const express = require("express");
-const app = express();
-const PORT = 8080;
-const cookieP = require("cookie-parser");
-app.use(cookieP());
+const generateRandomID = function(char) {
+  let result           = '';
+  let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let charactersLength = characters.length;
+  for (let i = 0; i < char; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
 
-// converts body from buffer to string that can be read
-// It then adds the data to the request object under the key body
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
-
-// Database of all the shortened URLs
+// Shortened URL Database
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+};
+
+// User Database
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
 };
 
 
@@ -102,10 +125,16 @@ app.post("/urls", (req, res) => {
   }
 });
 
-// Register Account
-// app.post('/register', (req, res) => {
-  
-// });
+//Register Account
+app.post('/register', (req, res) => {
+  let userID = generateRandomID(4);
+  users[userID] = { id: userID, 
+                    email: req.body.email,
+                    password: req.body.password 
+                  };
+  res.cookie("user_id", users[userID]);
+  res.redirect("/urls")
+});
 
 // Login
 app.post('/login', (req, res) => {
