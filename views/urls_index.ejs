@@ -14,23 +14,29 @@
   <main style="margin: 1em">
     <h3>My URLs</h3>
     <!--- List of URLs that have been shortened and original URLs -->
-    <table class="table">
+    <table class="table table-hover">
       <thead>
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
+          <th scope="col">Edit</th>
+          <th scope="col">Delete</th>
         </tr>
       </thead>
       <tbody>
         <% for(let url in urls) { %>
           <!-- tr = table row, td = table data -->
           <tr>
-            <!-- Wrap table Data with Form Delete button  -->
-            <form method="POST" action="/urls/<%= url %>/delete">
-            <td><a href="#"><%= url %></a></td>
+            <td><a href="<%= urls[urls] %>"><%= url %></a></td>
             <td><%= urls[url] %></td>
             <!-- Wrap delete button in a table data tag -->
-             <td><button type="delete" align-items="center" style="float: right; background-color: darkorange; border-color: darkorange;" class="btn btn-primary">Delete</button>
+            <td><button type="button" class="btn btn-outline-success">Edit</button>
+            </td>
+             <td>
+               <!-- Wrap table Data with Form Delete button  -->
+              <form method="POST" action="/urls/<%= url %>/delete">
+              <button type="delete" class="btn btn-outline-danger">Delete</button>
+              </form> 
             </td>
           </tr>
         </form>

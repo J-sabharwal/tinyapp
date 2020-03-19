@@ -11,6 +11,8 @@ const generateRandomString = function(char) {
 const express = require("express");
 const app = express();
 const PORT = 8080;
+const cookieP = require("cookie-parser");
+app.use(cookieP());
 
 // converts body from buffer to string that can be read
 // It then adds the data to the request object under the key body
@@ -22,6 +24,7 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
 
 // Tells the express application to use EJS as template engine
 app.set("view engine", "ejs");
@@ -43,13 +46,14 @@ app.get("/", (req, res) => {
 
 // Add a route handler to retrieve a new URL and use the formatting from urls_new
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = { username: req.cookies["username"], }
+  res.render("urls_new", templateVars);
 });
 
 // Passing the shortURL in the browser (providing the longURL is defined), will return the request back using the template in the urls_show file.
 // shortURL is declared when passing the shortURL in the browser, so the longURL is be defined using shortURL as the object key
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"],  };
   res.render("urls_show", templateVars);
 });
 
@@ -61,7 +65,9 @@ app.get("/u/:shortURL", (req, res) => {
 
 // new route handler that passes the urls.index file the URL data via res.render when /url is requested
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { urls: urlDatabase,
+  username: req.cookies["username"], 
+};
   res.render("urls_index", templateVars);
 });
 
@@ -89,6 +95,30 @@ app.post("/urls", (req, res) => {
   }
 });
 
+// Login
+app.post('/login', (req, res) => {
+  res.cookie("username", req.body.username);
+  res.redirect("/urls");
+
+});
+
+//Logout
+app.post('/logout', (req, res) => {
+  res.clearCookie("username", req.body.username);
+  res.redirect("/urls");
+
+});
+
+// Edit URL
+app.post('/urls/:id', (req, res) => {
+  console.log(req.body.editURL)
+  let longURL = req.body.editURL;
+  let shortURL = req.params.id;
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls`);
+});
+
+// Delete URL
 app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect(`/urls`);
