@@ -46,7 +46,7 @@ app.get("/", (req, res) => {
 
 // Add a route handler to retrieve a new URL and use the formatting from urls_new
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"], }
+  let templateVars = { username: req.cookies["username"], };
   res.render("urls_new", templateVars);
 });
 
@@ -66,8 +66,8 @@ app.get("/u/:shortURL", (req, res) => {
 // new route handler that passes the urls.index file the URL data via res.render when /url is requested
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
-  username: req.cookies["username"], 
-};
+    username: req.cookies["username"],
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -111,7 +111,7 @@ app.post('/logout', (req, res) => {
 
 // Edit URL
 app.post('/urls/:id', (req, res) => {
-  console.log(req.body.editURL)
+  console.log(req.body.editURL);
   let longURL = req.body.editURL;
   let shortURL = req.params.id;
   urlDatabase[shortURL] = longURL;
