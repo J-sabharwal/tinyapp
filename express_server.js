@@ -29,10 +29,10 @@ const generateRandomID = function(char) {
 };
 
 // User Database
-const users = { 
+const users = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "test@ex.com", 
+    id: "userRandomID",
+    email: "test@ex.com",
     password: "123"
   },
 };
@@ -46,26 +46,25 @@ const emailExists = (userEmail) => {
     if (email === userEmail) {
       answer = true;
     }
-  };
+  }
   return answer;
 };
 
-const passwordCorrect = (userPass) => {
+const loginCheck = (email, password) => {
   let answer = false;
 
   for (const id in users) {
     let pword = users[id]["password"];
+    let mail = users[id]["email"];
     
-    if (pword === userPass) {
-      answer = true;
+    if (password === pword && email === mail) {
+      answer = users[id]["id"];
     }
-  };
+  }
   return answer;
 };
 
-
-
-// Shortened URL Database
+// Shortened URL Database template
 const urlDatabase = {
 };
 
@@ -76,7 +75,7 @@ app.set("view engine", "ejs");
 // Login Page
 app.get("/login", (req, res) => {
   let templateVars = { user_id: req.cookies.user_id, };
-  res.render("login", templateVars)
+  res.render("login", templateVars);
 });
 
 // If request is received with /urls.json path, the urlDatabase object will be the response back to the listener
@@ -118,7 +117,6 @@ app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
     user_id: req.cookies.user_id,
   };
-  console.log('tempVars: ', templateVars);
   res.render("urls_index", templateVars);
 });
 
@@ -160,30 +158,30 @@ app.post('/register', (req, res) => {
 
   if (email === "" || password === "") {
     res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
-  };
+  }
   if (emailExists(email) === true) {
     res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
   } else {
-  let userID = generateRandomID(4);
-  users[userID] = { id: userID, 
-                    email: req.body.email,
-                    password: req.body.password 
-                  };
-  res.cookie("user_id", users[userID].id);
-  // console.log(users)
+    let userID = generateRandomID(4);
+    users[userID] = { id: userID,
+      email: req.body.email,
+      password: req.body.password
+    };
+    res.cookie("user_id", users[userID].id);
+    // console.log(users)
   
-  res.redirect("/urls")
-   }
+    res.redirect("/urls");
+  }
 });
 
 // Login
 app.post('/login', (req, res) => {
-  
-  if ((emailExists(req.body.email) === true) && (passwordCorrect(req.body.password) === true)) {
-  res.cookie("user_id", req.body.email);
-  res.redirect("/urls");
+  if (loginCheck(req.body.email, req.body.password)) {
+    let userID = loginCheck(req.body.email, req.body.password);
+    res.cookie("user_id", userID);
+    res.redirect("/urls");
   } else {
-  res.send("Email or Password Incorrect!")
+    res.status(403).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/403.jpeg");
   }
 });
 
