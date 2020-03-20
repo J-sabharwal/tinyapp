@@ -27,8 +27,8 @@
         <% for(let url in urls) { %>
         <!-- tr = table row, td = table data -->
         <tr>
-          <td><a href="<%= urls[urls] %>"><%= url %></a></td>
-          <td><%= urls[url] %></td>
+          <td><a href="<%= urls[url]['longURL']  %>"><%= url %></a></td>
+          <td><%= urls[url]["longURL"] %></td>
           <!-- Wrap delete button in a table data tag -->
           <td>
             <button type="button" class="btn btn-outline-success" ><a href="/urls/<%= url %>" style="text-decoration: none;">Edit</a></button>

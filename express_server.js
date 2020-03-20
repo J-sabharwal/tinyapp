@@ -20,6 +20,10 @@ const users = {
 
 // Shortened URL Database template
 const urlDatabase = {
+  aaAaaa: {
+    longURL: "http://www.bbc.co.uk",
+    userID: "aaaAaa"
+  }
 };
 
 // Functions ---------------------------------------------------------------------------------------------------------------------
@@ -99,6 +103,7 @@ app.get("/", (req, res) => {
 
 // Route handler - new URL and use the formatting from urls_new
 app.get("/urls/new", (req, res) => {
+  
   if (req.cookies.user_id) {
     let templateVars = { user_id: req.cookies.user_id, };
     res.render("urls_new", templateVars);
@@ -112,7 +117,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL]["longURL"],
     user_id: req.cookies.user_id,
   };
   res.render("urls_show", templateVars);
@@ -120,7 +125,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 // Redirecting the short URL to actual longURL
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL]["longURL"];
   res.redirect(longURL);
 });
 
@@ -139,27 +144,27 @@ app.get('/register', (req, res) => {
   res.render("urls_register", templateVars);
 });
 
-
+// Existing URL
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
- 
+  let urlExists = false;
   // Obj.values returns values within an array
   // .indexOf the longURL returns the element index number
   // If the index number is more that -1 then the URL already exists
-  if (Object.values(urlDatabase).indexOf(longURL) > -1) {
 
     // Looping over urlDatabase object comparing each key value with the longURL provided
-    for (const key in urlDatabase) {
+  for (const key in urlDatabase) {
 
-      // if theres a match then key is used to redirect the to the page for that URL
-      if (urlDatabase[key] === longURL) {
-        res.redirect(`urls/${key}`);
-      }
+    // if theres a match then key is used to redirect the to the page for that URL
+    if (urlDatabase[key]["longURL"] === longURL) {
+      urlExists = true;
+      res.redirect(`urls/${key}`);
     }
-  } else {
+  }
+  if (urlExists === false) {
     let shortURL = generateRandomString(6);
-    urlDatabase[shortURL] = longURL;
-    res.redirect(`urls/${shortURL}`);
+    urlDatabase[shortURL] = { longURL: longURL, userID: req.cookies.user_id};
+    res.redirect(`urls/${shortURL}`)
   }
 });
 
@@ -206,7 +211,7 @@ app.post('/logout', (req, res) => {
 app.post('/urls/:id', (req, res) => {
   let longURL = req.body.editURL;
   let shortURL = req.params.id;
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = { longURL: longURL }
   res.redirect(`/urls`);
 });
 
