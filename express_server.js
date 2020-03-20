@@ -78,10 +78,10 @@ const loginCheck = (email, password) => {
   let answer = false;
 
   for (const id in users) {
-    let pword = users[id]["password"];
+    let hashedPassword = users[id]["password"];
     let mail = users[id]["email"];
     
-    if (password === pword && email === mail) {
+    if (bcrypt.compareSync(password, hashedPassword) && email === mail) {
       answer = users[id]["id"];
     }
   }
@@ -197,6 +197,7 @@ app.post('/register', (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
+
   if (email === "" || password === "") {
     res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
   }
@@ -214,7 +215,7 @@ app.post('/register', (req, res) => {
       res.redirect("/urls");
       
     }
-    console.log(users)
+  
 })
 
 // Login
