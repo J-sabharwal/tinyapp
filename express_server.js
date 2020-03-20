@@ -1,4 +1,5 @@
 const express = require("express");
+const getUserByEmail = require("./helper")
 const app = express();
 const PORT = 8080;
 const cookieP = require("cookie-session");
@@ -66,19 +67,6 @@ const urlsForUser = function(id) {
   }
   return urlDB;
 }
-
-const emailExists = (userEmail) => {
-  let answer = false;
-
-  for (const id in users) {
-    let email = users[id]["email"];
-    
-    if (email === userEmail) {
-      answer = true;
-    }
-  }
-  return answer;
-};
 
 const loginCheck = (email, password) => {
   let answer = false;
@@ -207,7 +195,7 @@ app.post('/register', (req, res) => {
   if (email === "" || password === "") {
     res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
   }
-  if (emailExists(email) === true) {
+  if (getUserByEmail(email, users) === true) {
     res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
   } else {
     
