@@ -5,14 +5,14 @@
       aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <% if (user_id) { %>
+    <% if (userId) { %>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-item nav-link" href="/urls">My URLs</a>
           <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
         </div>
       <div class="navbar-collapse nav justify-content-end">
-        <a>Logged in As: <%= user_id %>! &nbsp</a>
+        <a>Logged in As: <%= userId %>! &nbsp</a>
         <form method="POST" action="/logout" class="form-inline">
           <div class="form-group mb-2">
             <button type="logout" class="btn btn-outline-light">Logout</button>
