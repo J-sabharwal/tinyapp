@@ -1,11 +1,10 @@
 const getUserByEmail = function(email, database) {
-  let Email;
  
   for (const key in database) {
-    Email = database[key]["email"];
+    let databaseEmail = database[key]["email"];
   
-   if (Email === email) {
-    return database[key]["userID"];
+    if (databaseEmail === email) {
+      return database[key]["userID"];
     }
   }
 };
