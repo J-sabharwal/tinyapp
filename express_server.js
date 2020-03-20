@@ -1,8 +1,14 @@
 const express = require("express");
 const app = express();
 const PORT = 8080;
-const cookieP = require("cookie-parser");
-app.use(cookieP());
+const cookieP = require("cookie-session");
+app.use(cookieP({
+  name: 'session',
+  keys: ['cookie-monster'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
 // converts body from buffer to string that can be read
 // It then adds the data to the request object under the key body
 const bodyParser = require("body-parser");
@@ -95,7 +101,7 @@ app.set("view engine", "ejs");
 
 // Login Page
 app.get("/login", (req, res) => {
-  let templateVars = { user_id: req.cookies.user_id, };
+  let templateVars = { user_id: req.session.user_id, };
   res.render("login", templateVars);
 });
 
@@ -117,8 +123,8 @@ app.get("/", (req, res) => {
 // Route handler - new URL and use the formatting from urls_new
 app.get("/urls/new", (req, res) => {
   
-  if (req.cookies.user_id) {
-    let templateVars = { user_id: req.cookies.user_id, };
+  if (req.session.user_id) {
+    let templateVars = { user_id: req.session.user_id, };
     res.render("urls_new", templateVars);
   } else {
     res.redirect("/login");
@@ -128,11 +134,11 @@ app.get("/urls/new", (req, res) => {
 // Passing the shortURL in the browser, will return the request using urls_show template.
 // the longURL is be defined using shortURL as the object key
 app.get("/urls/:shortURL", (req, res) => {
-  if (req.cookies.user_id) {
+  if (req.session.user_id) {
     let templateVars = {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL]["longURL"],
-      user_id: req.cookies.user_id,
+      user_id: req.session.user_id,
     };
     res.render("urls_show", templateVars);
   } else {
@@ -148,10 +154,10 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Route Handler request urls and renders ur_index
 app.get("/urls", (req, res) => {
-  if (req.cookies.user_id) {
-  let result = urlsForUser(req.cookies.user_id)
+  if (req.session.user_id) {
+  let result = urlsForUser(req.session.user_id)
   let templateVars = { urls: result,
-    user_id: req.cookies.user_id,
+    user_id: req.session.user_id,
   };
   res.render("urls_index", templateVars);
   } else {
@@ -163,7 +169,7 @@ app.get("/urls", (req, res) => {
 
 // Registration Page
 app.get('/register', (req, res) => {
-  let templateVars = { user_id: req.cookies.user_id,
+  let templateVars = { user_id: req.session.user_id,
   };
   res.render("urls_register", templateVars);
 });
@@ -187,7 +193,7 @@ app.post("/urls", (req, res) => {
   }
   if (urlExists === false) {
     let shortURL = generateRandomString(6);
-    urlDatabase[shortURL] = { longURL: longURL, userID: req.cookies.user_id};
+    urlDatabase[shortURL] = { longURL: longURL, userID: req.session.user_id};
     res.redirect(`urls/${shortURL}`)
   }
 });
@@ -209,11 +215,10 @@ app.post('/register', (req, res) => {
     users[userID] = { id: userID,
       email: req.body.email,
       password: hashedPassword }
-      
-      res.cookie("user_id", users[userID].id);
+
+      req.session.user_id = users[userID].id;
       
       res.redirect("/urls");
-      
     }
   
 })
@@ -222,7 +227,9 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   if (loginCheck(req.body.email, req.body.password)) {
     let userID = loginCheck(req.body.email, req.body.password);
-    res.cookie("user_id", userID);
+
+    req.session.user_id = userID;
+    
     res.redirect("/urls");
   } else {
     res.status(403).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/403.jpeg");
@@ -231,7 +238,8 @@ app.post('/login', (req, res) => {
 
 //Logout
 app.post('/logout', (req, res) => {
-  res.clearCookie("user_id", req.body.user_id);
+  req.session = null
+  
   res.redirect("/login");
 });
 
@@ -239,7 +247,7 @@ app.post('/logout', (req, res) => {
 app.post('/urls/:id', (req, res) => {
   let longURL = req.body.editURL;
   let shortURL = req.params.id;
-  let userCookieID = req.cookies.user_id;
+  let userCookieID = req.session.user_id;
 
   if (urlDatabase[shortURL]["userID"] === userCookieID) {
   urlDatabase[shortURL]["longURL"] = longURL
@@ -252,7 +260,7 @@ app.post('/urls/:id', (req, res) => {
 // Delete URL
 app.post('/urls/:shortURL/delete', (req, res) => {
   let shortURL = req.params.shortURL;
-  let userCookieID = req.cookies.user_id;
+  let userCookieID = req.session.user_id;
 
   if (urlDatabase[shortURL]["userID"] === userCookieID) {
   delete urlDatabase[req.params.shortURL];
