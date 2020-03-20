@@ -48,6 +48,17 @@ const generateRandomID = function(char) {
   return result;
 };
 
+const urlsForUser = function(id) {
+  let urlDB = {};
+
+  for (const key in urlDatabase) {
+    if (urlDatabase[key]["userID"] === id) {
+      urlDB[key] = { longURL: urlDatabase[key]["longURL"] };
+    }
+  }
+  return urlDB;
+}
+
 const emailExists = (userEmail) => {
   let answer = false;
 
@@ -115,12 +126,16 @@ app.get("/urls/new", (req, res) => {
 // Passing the shortURL in the browser, will return the request using urls_show template.
 // the longURL is be defined using shortURL as the object key
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]["longURL"],
-    user_id: req.cookies.user_id,
-  };
-  res.render("urls_show", templateVars);
+  if (req.cookies.user_id) {
+    let templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL]["longURL"],
+      user_id: req.cookies.user_id,
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.send("Please Login or Register a New Account")
+  }
 });
 
 // Redirecting the short URL to actual longURL
@@ -131,10 +146,15 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Route Handler request urls and renders ur_index
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase,
+  if (req.cookies.user_id) {
+  let result = urlsForUser(req.cookies.user_id)
+  let templateVars = { urls: result,
     user_id: req.cookies.user_id,
   };
   res.render("urls_index", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 // Registration Page
@@ -211,14 +231,27 @@ app.post('/logout', (req, res) => {
 app.post('/urls/:id', (req, res) => {
   let longURL = req.body.editURL;
   let shortURL = req.params.id;
-  urlDatabase[shortURL] = { longURL: longURL }
+  let userCookieID = req.cookies.user_id;
+
+  if (urlDatabase[shortURL]["userID"] === userCookieID) {
+  urlDatabase[shortURL]["longURL"] = longURL
   res.redirect(`/urls`);
+  } else {
+    res.status(403).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/403.jpeg");
+  }
 });
 
 // Delete URL
 app.post('/urls/:shortURL/delete', (req, res) => {
+  let shortURL = req.params.shortURL;
+  let userCookieID = req.cookies.user_id;
+
+  if (urlDatabase[shortURL]["userID"] === userCookieID) {
   delete urlDatabase[req.params.shortURL];
   res.redirect(`/urls`);
+  } else {
+    res.status(403).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/403.jpeg");
+  }
 });
 
 // Using EXPRESS to listen port request and Printing message to to notify of listener
