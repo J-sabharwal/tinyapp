@@ -7,6 +7,8 @@ app.use(cookieP());
 // It then adds the data to the request object under the key body
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+const bcrypt = require('bcrypt');
+
 
 // Databases --------------------------------------------------------------------------------------------------------------------
 
@@ -157,6 +159,8 @@ app.get("/urls", (req, res) => {
   }
 });
 
+
+
 // Registration Page
 app.get('/register', (req, res) => {
   let templateVars = { user_id: req.cookies.user_id,
@@ -171,10 +175,10 @@ app.post("/urls", (req, res) => {
   // Obj.values returns values within an array
   // .indexOf the longURL returns the element index number
   // If the index number is more that -1 then the URL already exists
-
-    // Looping over urlDatabase object comparing each key value with the longURL provided
+  
+  // Looping over urlDatabase object comparing each key value with the longURL provided
   for (const key in urlDatabase) {
-
+    
     // if theres a match then key is used to redirect the to the page for that URL
     if (urlDatabase[key]["longURL"] === longURL) {
       urlExists = true;
@@ -192,23 +196,26 @@ app.post("/urls", (req, res) => {
 app.post('/register', (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-
+  const hashedPassword = bcrypt.hashSync(password, 10);
   if (email === "" || password === "") {
     res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
   }
   if (emailExists(email) === true) {
     res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
   } else {
+    
     let userID = generateRandomID(4);
     users[userID] = { id: userID,
       email: req.body.email,
-      password: req.body.password
-    };
-    res.cookie("user_id", users[userID].id);
-  
-    res.redirect("/urls");
-  }
-});
+      password: hashedPassword }
+      
+      res.cookie("user_id", users[userID].id);
+      
+      res.redirect("/urls");
+      
+    }
+    console.log(users)
+})
 
 // Login
 app.post('/login', (req, res) => {
