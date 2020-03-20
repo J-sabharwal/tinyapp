@@ -99,8 +99,12 @@ app.get("/", (req, res) => {
 
 // Route handler - new URL and use the formatting from urls_new
 app.get("/urls/new", (req, res) => {
-  let templateVars = { user_id: req.cookies.user_id, };
-  res.render("urls_new", templateVars);
+  if (req.cookies.user_id) {
+    let templateVars = { user_id: req.cookies.user_id, };
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 // Passing the shortURL in the browser, will return the request using urls_show template.
