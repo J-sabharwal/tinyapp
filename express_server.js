@@ -46,16 +46,6 @@ const generateRandomString = function(char) {
   return result;
 };
 
-const generateRandomID = function(char) {
-  let result           = '';
-  let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let charactersLength = characters.length;
-  for (let i = 0; i < char; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-};
-
 const urlsForUser = function(id) {
   let urlDB = {};
 
@@ -97,29 +87,19 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// HTML markup used with output string, can cause issues
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body</html>\n");
-});
-
-// Route Handler - Hello
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
 // Route handler - new URL and use the formatting from urls_new
 app.get("/urls/new", (req, res) => {
-  
   if (req.session.userId) {
-    let templateVars = { userId: req.session.userId, };
+    let templateVars = {
+      userId: req.session.userId,
+    };
     res.render("urls_new", templateVars);
   } else {
     res.redirect("/login");
   }
 });
 
-// Passing the shortURL in the browser, will return the request using urls_show template.
-// the longURL is be defined using shortURL as the object key
+// Shows the Short URL generated page
 app.get("/urls/:shortURL", (req, res) => {
   if (req.session.userId) {
     let templateVars = {
@@ -143,7 +123,8 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls", (req, res) => {
   if (req.session.userId) {
     let result = urlsForUser(req.session.userId);
-    let templateVars = { urls: result,
+    let templateVars = {
+      urls: result,
       userId: req.session.userId,
     };
     res.render("urls_index", templateVars);
@@ -152,11 +133,10 @@ app.get("/urls", (req, res) => {
   }
 });
 
-
-
 // Registration Page
 app.get('/register', (req, res) => {
-  let templateVars = { userId: req.session.userId,
+  let templateVars = {
+    userId: req.session.userId,
   };
   res.render("urls_register", templateVars);
 });
@@ -165,10 +145,7 @@ app.get('/register', (req, res) => {
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   let urlExists = false;
-  // Obj.values returns values within an array
-  // .indexOf the longURL returns the element index number
-  // If the index number is more that -1 then the URL already exists
-  
+
   // Looping over urlDatabase object comparing each key value with the longURL provided
   for (const key in urlDatabase) {
     
@@ -180,7 +157,10 @@ app.post("/urls", (req, res) => {
   }
   if (urlExists === false) {
     let shortURL = generateRandomString(6);
-    urlDatabase[shortURL] = { longURL: longURL, userID: req.session.userId};
+    urlDatabase[shortURL] = {
+      longURL: longURL,
+      userID: req.session.userId
+    };
     res.redirect(`urls/${shortURL}`);
   }
 });
@@ -197,14 +177,13 @@ app.post('/register', (req, res) => {
   if (getUserByEmail(email, users) === true) {
     res.status(400).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/400.jpeg");
   } else {
-    
-    let userID = generateRandomID(4);
-    users[userID] = { id: userID,
+    let userID = generateRandomString(4);
+    users[userID] = {
+      id: userID,
       email: req.body.email,
-      password: hashedPassword };
-
+      password: hashedPassword
+    };
     req.session.userId = users[userID].id;
-      
     res.redirect("/urls");
   }
   
@@ -214,9 +193,7 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   if (loginCheck(req.body.email, req.body.password)) {
     let userID = loginCheck(req.body.email, req.body.password);
-
     req.session.userId = userID;
-    
     res.redirect("/urls");
   } else {
     res.status(403).sendFile("/vagrant/w3/tinyApp/tinyapp/Images/403.jpeg");
@@ -226,7 +203,6 @@ app.post('/login', (req, res) => {
 //Logout
 app.post('/logout', (req, res) => {
   req.session = null;
-  
   res.redirect("/login");
 });
 
